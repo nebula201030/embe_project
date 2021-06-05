@@ -1,5 +1,6 @@
 #include <SPI.h> //설치 필요
 #include <DHT.11>
+#include <Wire.h>
 
 #define OBJECT 0xA0 // 대상 온도 커맨드 
 #define SENSOR 0xA1 // 센서 온도 커맨드 
@@ -11,6 +12,7 @@ int iOBJECT, iSENSOR; // 부호 2byte 온도 저장 변수
 
 void setup() { 
  /* Setting SCE & SPI */ 
+    Wire.begin
     digitalWrite(chipSelectPin , HIGH); // SCE High Level 
     pinMode(chipSelectPin , OUTPUT); // SCE OUTPUT Mode 
     SPI.setDataMode(SPI_MODE3); // SPI Mode 
@@ -55,7 +57,7 @@ void loop() {
         Serial.print("Object Temp : "); // 하이퍼터미널 출력 
         Serial.print(float(iOBJECT)/100, 2); 
         Serial.print(" Sensor Temp : "); 
-        Serial.println(float(iSENSOR)/100, 2); 
+        Serial.println(float(iSENSOR)/100, 2);        
     } 
 
     int i;
@@ -67,4 +69,36 @@ void loop() {
     else{
         Serial.print("Error");
     }
+    byte error,address;
+    int nDevices;
+    Serial.PrintLn("Scanning..");
+    nDevicec = 0;
+    for(address=1;address<127;address++)
+    {
+        Wire.begineTransmission(address);
+        error = Wire.endTransmission();
+
+        if(error == 0)
+        {
+            Serial.print("ready...");
+            if(address<16)
+                Serial.print("0");
+            Serial.print(address,HEX);
+            Serial.println("!");
+            nDevices++;
+        }
+        else if(error == 4)
+        {
+            Serial.print("ready...");
+            if(address < 16)
+                Serial.print("0");
+            Serial.println(address,HEX);
+        }
+    }
+
+    if(nDevices == 0)
+        Serial.println("read...");
+    else
+        Serial.println("done\n");
+    delay(5000);
 }
