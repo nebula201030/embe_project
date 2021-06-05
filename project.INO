@@ -6,7 +6,10 @@
 #define OBJECT 0xA0 // 대상 온도 커맨드 
 #define SENSOR 0xA1 // 센서 온도 커맨드 
 #define dht11 A1 //온습도 핀 설정
-QiquidCrustal_I2C lcd(0x3F,16,2);
+#define TRIG 9
+#define ECHO 8
+
+LiquidCrustal_I2C lcd(0x3F,16,2);
 
 const int chipSelectPin = 10; 
 unsigned char Timer1_Flag = 0;; 
@@ -15,6 +18,8 @@ int iOBJECT, iSENSOR; // 부호 2byte 온도 저장 변수
 void setup() { 
  /* Setting SCE & SPI */ 
     //Wire.begin
+    pinMode(TRIG,OUTPUT);
+    pinMode(ECHO,INPUT);
     digitalWrite(chipSelectPin , HIGH); // SCE High Level 
     pinMode(chipSelectPin , OUTPUT); // SCE OUTPUT Mode 
     SPI.setDataMode(SPI_MODE3); // SPI Mode 
@@ -93,6 +98,22 @@ void loop() {
     }
     delay(1000);
     lcd.clear();
+
+    long duration,distance;
+
+    digitalWrite(TRIG, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIG, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG, LOW);
+
+    duration - puleIn(ECHO,HIGH);
+     //물체에 반사되어돌아온 초음파의 시간을 변수에 저장합니다.
+    //34000*초음파가 물체로 부터 반사되어 돌아오는시간 /1000000 / 2(왕복값이아니라 편도값이기때문에 나누기2를 해줍니다.)
+     //초음파센서의 거리값이 위 계산값과 동일하게 Cm로 환산되는 계산공식 입니다. 수식이 간단해지도록 적용했습니다.
+    distance = duration * 17 / 1000; 
+    delay (1000);
+    
     // byte error,address;
     // int nDevices;
     // Serial.PrintLn("Scanning..");
