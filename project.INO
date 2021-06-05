@@ -1,6 +1,9 @@
-#include<SPI.h> //설치 필요
+#include <SPI.h> //설치 필요
+#include <DHT.11>
+
 #define OBJECT 0xA0 // 대상 온도 커맨드 
 #define SENSOR 0xA1 // 센서 온도 커맨드 
+#define dht11 A1 //온습도 핀 설정
 
 const int chipSelectPin = 10; 
 unsigned char Timer1_Flag = 0;; 
@@ -54,4 +57,14 @@ void loop() {
         Serial.print(" Sensor Temp : "); 
         Serial.println(float(iSENSOR)/100, 2); 
     } 
+
+    int i;
+    float humi. temp;
+    if((i = dht11.read(humi, temp))==0){
+        Serial.print(humi);
+        Serial.print(temp);
+    }
+    else{
+        Serial.print("Error");
+    }
 }
