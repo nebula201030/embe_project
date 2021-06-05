@@ -1,10 +1,12 @@
 #include <SPI.h> //설치 필요
 #include <DHT.11>
-#include <Wire.h>
+#include <LiquidCrystal_i2c.h
+//#include <Wire.h>
 
 #define OBJECT 0xA0 // 대상 온도 커맨드 
 #define SENSOR 0xA1 // 센서 온도 커맨드 
 #define dht11 A1 //온습도 핀 설정
+QiquidCrustal_I2C lcd(0x3F,16,2);
 
 const int chipSelectPin = 10; 
 unsigned char Timer1_Flag = 0;; 
@@ -12,7 +14,7 @@ int iOBJECT, iSENSOR; // 부호 2byte 온도 저장 변수
 
 void setup() { 
  /* Setting SCE & SPI */ 
-    Wire.begin
+    //Wire.begin
     digitalWrite(chipSelectPin , HIGH); // SCE High Level 
     pinMode(chipSelectPin , OUTPUT); // SCE OUTPUT Mode 
     SPI.setDataMode(SPI_MODE3); // SPI Mode 
@@ -23,6 +25,8 @@ void setup() {
     Timer1_Init(); // Timer1 setup : 500ms(2Hz) interval 
     Serial.begin(9600); 
     interrupts(); // enable all interrupts 
+    lcd.init();
+    lcd.backlight();
 } 
 
 int SPI_COMMAND (unsigned char cCMD){ 
@@ -69,36 +73,56 @@ void loop() {
     else{
         Serial.print("Error");
     }
-    byte error,address;
-    int nDevices;
-    Serial.PrintLn("Scanning..");
-    nDevicec = 0;
-    for(address=1;address<127;address++)
-    {
-        Wire.begineTransmission(address);
-        error = Wire.endTransmission();
 
-        if(error == 0)
-        {
-            Serial.print("ready...");
-            if(address<16)
-                Serial.print("0");
-            Serial.print(address,HEX);
-            Serial.println("!");
-            nDevices++;
-        }
-        else if(error == 4)
-        {
-            Serial.print("ready...");
-            if(address < 16)
-                Serial.print("0");
-            Serial.println(address,HEX);
-        }
+    int value = random(0,3);
+
+    if(value == 0){
+        lcd.setCursor(0,0);
+        lcd.print("ready...");
     }
 
-    if(nDevices == 0)
-        Serial.println("read...");
-    else
-        Serial.println("done\n");
-    delay(5000);
+    else if (value == 1){
+        lcd.setCursor(0,1);
+        lcd.print("helloworld");
+    }
+    else if (value == 2){
+        lcd.setCursor(0,0);
+        lcd.print("ready...");
+        lcd.setCursor(0,1);
+        lcd.print("hello world");
+    }
+    delay(1000);
+    lcd.clear();
+    // byte error,address;
+    // int nDevices;
+    // Serial.PrintLn("Scanning..");
+    // nDevicec = 0;
+    // for(address=1;address<127;address++)
+    // {
+    //     Wire.begineTransmission(address);
+    //     error = Wire.endTransmission();
+
+    //     if(error == 0)
+    //     {
+    //         Serial.print("ready...");
+    //         if(address<16)
+    //             Serial.print("0");
+    //         Serial.print(address,HEX);
+    //         Serial.println("!");
+    //         nDevices++;
+    //     }
+    //     else if(error == 4)
+    //     {
+    //         Serial.print("ready...");
+    //         if(address < 16)
+    //             Serial.print("0");
+    //         Serial.println(address,HEX);
+    //     }
+    // }
+
+    // if(nDevices == 0)
+    //     Serial.println("read...");
+    // else
+    //     Serial.println("done\n");
+    // delay(5000);
 }
